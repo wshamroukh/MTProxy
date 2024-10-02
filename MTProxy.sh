@@ -68,10 +68,10 @@ sed -i "/\$mtproxy_public_ip/ s//$mtproxy_public_ip/" $mtproxy_service
 # installation and configuration of mtproxy 
 echo -e "\e[1;36mCopying configuration files to $vm_name and installing mtproxy firewall...\e[0m"
 scp -o StrictHostKeyChecking=no $script_file $mtproxy_service $admin_username@$mtproxy_public_ip:/home/$admin_username
+ssh -o StrictHostKeyChecking=no $admin_username@$mtproxy_public_ip "chmod +x /home/$admin_username/script.sh && sh /home/$admin_username/script.sh"
 ssh -o StrictHostKeyChecking=no $admin_username@$mtproxy_public_ip "secret=\$(head -c 16 /dev/urandom | xxd -ps) && sed -i \"s/\\\$secret/\$secret/\" ~/MTProxy.service && echo You can use this URL for MTPROXY: https://t.me/proxy?server=\\$mtproxy_public_ip\&port=8443\&secret=\$secret"
 ssh -o StrictHostKeyChecking=no $admin_username@$mtproxy_public_ip "sed -i \"s/\\\$mtproxy_private_ip/$mtproxy_private_ip/\" ~/MTProxy.service"
 ssh -o StrictHostKeyChecking=no $admin_username@$mtproxy_public_ip "sed -i \"s/\\\$mtproxy_public_ip/$mtproxy_public_ip/\" ~/MTProxy.service"
 ssh -o StrictHostKeyChecking=no $admin_username@$mtproxy_public_ip "sudo cp /home/$admin_username/MTProxy.service /etc/systemd/system/MTProxy.service"
-ssh -o StrictHostKeyChecking=no $admin_username@$mtproxy_public_ip "chmod +x /home/$admin_username/script.sh && sh /home/$admin_username/script.sh"
 ssh -o StrictHostKeyChecking=no $admin_username@$mtproxy_public_ip "sudo systemctl daemon-reload && sudo systemctl restart MTProxy.service && sudo systemctl status MTProxy.service"
 rm $script_file $mtproxy_service
