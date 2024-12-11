@@ -1,5 +1,5 @@
 
-# https://github.com/mtproxy/update
+# https://gist.github.com/rameerez/8debfc790e965009ca2949c3b4580b91
 #variables
 rg='mtproxy'
 location='centralindia'
