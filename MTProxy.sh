@@ -45,8 +45,10 @@ sudo useradd -m -s /bin/false mtproxy && sudo chown -R mtproxy:mtproxy /opt/MTPr
 sudo ufw allow 8443/tcp
 EOF
 
+secret=\$(head -c 16 /dev/urandom | xxd -ps) 
+
 mtproxy_service=~/MTProxy.service
-tee -a $mtproxy_service > /dev/null <<'EOT'
+cat <<EOT > $mtproxy_service
 [Unit]
 Description=MTProxy
 After=network.target
@@ -54,24 +56,19 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=/opt/MTProxy
-ExecStart=/opt/MTProxy/mtproto-proxy -u mtproxy -p 8888 -H 8443 -S $secret --aes-pwd proxy-secret proxy-multi.conf -M 1 --http-stats --nat-info $mtproxy_private_ip:$mtproxy_public_ip
+ExecStart=/opt/MTProxy/mtproto-proxy -u mtproxy -p 8888 -H 8443 -S ${secret} --aes-pwd proxy-secret proxy-multi.conf -M 1 --http-stats --nat-info ${mtproxy_private_ip}:${mtproxy_public_ip}
 Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
 EOT
 
-sed -i "/\$secret/ s//$secret/" $mtproxy_service
-sed -i "/\$mtproxy_private_ip/ s//$mtproxy_private_ip/" $mtproxy_service
-sed -i "/\$mtproxy_public_ip/ s//$mtproxy_public_ip/" $mtproxy_service
-
 # installation and configuration of mtproxy 
 echo -e "\e[1;36mCopying configuration files to $vm_name and installing mtproxy firewall...\e[0m"
 scp -o StrictHostKeyChecking=no $script_file $mtproxy_service $admin_username@$mtproxy_public_ip:/home/$admin_username
 ssh -o StrictHostKeyChecking=no $admin_username@$mtproxy_public_ip "chmod +x /home/$admin_username/script.sh && sh /home/$admin_username/script.sh"
-ssh -o StrictHostKeyChecking=no $admin_username@$mtproxy_public_ip "secret=\$(head -c 16 /dev/urandom | xxd -ps) && sed -i \"s/\\\$secret/\$secret/\" ~/MTProxy.service && echo You can use this URL for MTPROXY: https://t.me/proxy?server=\\$mtproxy_public_ip\&port=8443\&secret=\$secret"
-ssh -o StrictHostKeyChecking=no $admin_username@$mtproxy_public_ip "sed -i \"s/\\\$mtproxy_private_ip/$mtproxy_private_ip/\" ~/MTProxy.service"
-ssh -o StrictHostKeyChecking=no $admin_username@$mtproxy_public_ip "sed -i \"s/\\\$mtproxy_public_ip/$mtproxy_public_ip/\" ~/MTProxy.service"
 ssh -o StrictHostKeyChecking=no $admin_username@$mtproxy_public_ip "sudo cp /home/$admin_username/MTProxy.service /etc/systemd/system/MTProxy.service"
 ssh -o StrictHostKeyChecking=no $admin_username@$mtproxy_public_ip "sudo systemctl daemon-reload && sudo systemctl restart MTProxy.service && sudo systemctl status MTProxy.service"
+
+echo "You can use this URL for MTPROXY: https://t.me/proxy?server=${myip}&port=8443&secret=${secret}"
 rm $script_file $mtproxy_service
