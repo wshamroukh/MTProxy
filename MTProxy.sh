@@ -35,8 +35,8 @@ script_file=~/script.sh
 cat <<EOF > $script_file
 sudo apt update && sudo apt install -y git curl build-essential libssl-dev zlib1g-dev
 git clone https://github.com/GetPageSpeed/MTProxy && cd MTProxy
-sudo sed -i "s/-fwrapv/-fwrapv -fcommon/" /home/$admin_username/Make
-sudo sed -i "s/-lpthread -lcrypto/-lpthread -lcrypto -fcommon/" /home/$admin_username/MTProxy/Make
+sudo sed -i "s/-fwrapv/-fwrapv -fcommon/" /home/$admin_username/MTProxy/Makefile
+sudo sed -i "s/-lpthread -lcrypto/-lpthread -lcrypto -fcommon/" /home/$admin_username/MTProxy/Makefile
 cd /home/$admin_username/MTProxy/ && make
 sudo mkdir /opt/MTProxy && sudo cp objs/bin/mtproto-proxy /opt/MTProxy/ && cd /opt/MTProxy
 sudo curl -s https://core.telegram.org/getProxySecret -o proxy-secret
