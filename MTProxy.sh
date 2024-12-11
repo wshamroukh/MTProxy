@@ -70,5 +70,5 @@ ssh -o StrictHostKeyChecking=no $admin_username@$mtproxy_public_ip "chmod +x /ho
 ssh -o StrictHostKeyChecking=no $admin_username@$mtproxy_public_ip "sudo cp /home/$admin_username/MTProxy.service /etc/systemd/system/MTProxy.service"
 ssh -o StrictHostKeyChecking=no $admin_username@$mtproxy_public_ip "sudo systemctl daemon-reload && sudo systemctl restart MTProxy.service && sudo systemctl status MTProxy.service"
 
-echo "You can use this URL for MTPROXY: https://t.me/proxy?server=${myip}&port=8443&secret=${secret}"
+echo "You can use this URL for MTPROXY: https://t.me/proxy?server=${mtproxy_public_ip}&port=8443&secret=${secret}"
 rm $script_file $mtproxy_service
