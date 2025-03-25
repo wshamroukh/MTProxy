@@ -8,9 +8,9 @@ sudo curl -s https://core.telegram.org/getProxySecret -o proxy-secret
 sudo curl -s https://core.telegram.org/getProxyConfig -o proxy-multi.conf
 sudo useradd -m -s /bin/false mtproxy && sudo chown -R mtproxy:mtproxy /opt/MTProxy
 sudo ufw allow 8443/tcp
-secret=\$(head -c 16 /dev/urandom | xxd -ps)
-mypubip=$(curl -s4 https://ifconfig.co)
-privip=$(ip -4 -o addr show scope global | awk '{print $4}' | cut -d'/' -f1)
+secret=$(head -c 16 /dev/urandom | xxd -ps)
+mypubip=$(curl https://ifconfig.me) && echo $mypubip
+privip=$(ip -4 -o addr show scope global | awk '{print $4}' | cut -d'/' -f1) && echo $privip
 
 mtproxy_service=~/MTProxy.service
 cat <<EOT > $mtproxy_service
