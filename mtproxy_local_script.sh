@@ -29,7 +29,7 @@ WantedBy=multi-user.target
 EOT
 
 sudo cp ~/MTProxy.service /etc/systemd/system/MTProxy.service
-sudo systemctl daemon-reload && sudo systemctl restart MTProxy.service && sudo systemctl status MTProxy.service
+sudo systemctl daemon-reload && sudo systemctl enable MTProxy.service && sudo systemctl restart MTProxy.service && sudo systemctl status MTProxy.service
 
 echo "You can use this URL for MTPROXY: https://t.me/proxy?server=${mypubip}&port=8443&secret=${secret}"
 
